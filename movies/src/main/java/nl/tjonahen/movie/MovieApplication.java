@@ -13,10 +13,10 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableFeignClients
-public class MoviegatewayApplication extends WebSecurityConfigurerAdapter {
+public class MovieApplication extends WebSecurityConfigurerAdapter {
 
     public static void main(String[] args) {
-        SpringApplication.run(MoviegatewayApplication.class, args);
+        SpringApplication.run(MovieApplication.class, args);
     }
 
     @Override

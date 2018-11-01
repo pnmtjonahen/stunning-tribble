@@ -29,16 +29,16 @@ public class ReviewsControllerTest {
 
     @Test
     public void testFlow() throws Exception {
-        this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[]")));
+        this.mockMvc.perform(get("/api/reviews")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[]")));
         
-        this.mockMvc.perform(post("/")
+        this.mockMvc.perform(post("/api/reviews")
                 .contentType(APPLICATION_JSON)
                 .content("{\"movieId\":\"1\", \"title\":\"test title1\", \"review\":\"Just a test review\"}")
                 .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[{\"id\":1,\"movieId\":1,\"title\":\"test title1\",\"review\":\"Just a test review\"}]")));
+        this.mockMvc.perform(get("/api/reviews")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[{\"id\":1,\"movieId\":1,\"title\":\"test title1\",\"review\":\"Just a test review\"}]")));
         
     }
 }

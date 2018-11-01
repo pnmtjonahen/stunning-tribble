@@ -30,18 +30,18 @@ public class WatchlistControllerTest {
 
     @Test
     public void testFlow() throws Exception {
-        this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[]")));
+        this.mockMvc.perform(get("/api/watchlist")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[]")));
 
-        this.mockMvc.perform(post("/")
+        this.mockMvc.perform(post("/api/watchlist")
                 .contentType(APPLICATION_JSON)
                 .content("{\"id\":\"1\", \"title\":\"test title1\", \"description\":\"Sample moview\", \"watched\":\"false\"}")
                 .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[{\"id\":1,\"title\":\"test title1\",\"description\":\"Sample moview\",\"watched\":false}]")));
+        this.mockMvc.perform(get("/api/watchlist")).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("[{\"id\":1,\"title\":\"test title1\",\"description\":\"Sample moview\",\"watched\":false}]")));
 
-        this.mockMvc.perform(put("/1?watched=true")).andDo(print()).andExpect(status().isOk());
+        this.mockMvc.perform(put("/api/watchlist/1?watched=true")).andDo(print()).andExpect(status().isOk());
     }
 
 }

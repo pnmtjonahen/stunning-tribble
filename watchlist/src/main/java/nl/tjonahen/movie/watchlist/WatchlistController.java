@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Philippe Tjon - A - Hen
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/watchlist")
 @RequiredArgsConstructor
 public class WatchlistController {
     private final WatchlistRepository repository;
@@ -34,7 +34,7 @@ public class WatchlistController {
         repository.save(newMovie);
     }
     
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public void watched(@PathVariable("id") Long id, @RequestParam("watched") boolean watched) {
         WatchlistMovie wm = repository.findById(id).get();
         wm.setWatched(watched);
