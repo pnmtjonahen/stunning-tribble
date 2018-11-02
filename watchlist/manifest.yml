@@ -1,0 +1,8 @@
+---
+# comment in manifest
+applications:
+    - name : ptj-movie-watchlist
+      buildpack: java_buildpack
+      path: target/watchlist-0.0.1-SNAPSHOT.jar
+      services:
+        - myMysqlDB
