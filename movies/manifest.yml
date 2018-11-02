@@ -1,0 +1,7 @@
+---
+# comment in manifest
+applications:
+    - name : ptj-movie-movies
+      buildpack: java_buildpack
+      path: target/movies-0.0.1-SNAPSHOT.jar
+

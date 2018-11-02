@@ -1,0 +1,7 @@
+---
+# comment in manifest
+applications:
+    - name : ptj-movie-gateway
+      buildpack: java_buildpack
+      path: target/moviegateway-0.0.1-SNAPSHOT.jar
+
