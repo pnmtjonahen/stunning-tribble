@@ -1,0 +1,33 @@
+= Movie Review service
+
+This is the moview review services
+
+Getting all te reviews:
+
+.request
+include::{snippets}/reviews/http-request.adoc[]
+
+.response
+include::{snippets}/reviews/http-response.adoc[]
+.response-body
+include::{snippets}/reviews/response-body.adoc[]
+
+Adding a review:
+
+.request
+include::{snippets}/add review/http-request.adoc[]
+.request-fields
+include::{snippets}/add review/request-fields.adoc[]
+
+.response
+include::{snippets}/add review/http-response.adoc[]
+
+Get a review:
+
+.request
+include::{snippets}/get review/http-request.adoc[]
+
+.response
+include::{snippets}/get review/http-response.adoc[]
+.response-fields
+include::{snippets}/get review/response-fields.adoc[]
