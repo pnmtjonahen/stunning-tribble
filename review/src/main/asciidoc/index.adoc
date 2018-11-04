@@ -2,32 +2,14 @@
 
 This is the moview review services
 
-Getting all te reviews:
+Getting all the reviews:
 
-.request
-include::{snippets}/reviews/http-request.adoc[]
-
-.response
-include::{snippets}/reviews/http-response.adoc[]
-.response-body
-include::{snippets}/reviews/response-body.adoc[]
+operation::reviews[]
 
 Adding a review:
 
-.request
-include::{snippets}/add review/http-request.adoc[]
-.request-fields
-include::{snippets}/add review/request-fields.adoc[]
+operation::add review[snippets='http-request,request-fields,http-response']
 
-.response
-include::{snippets}/add review/http-response.adoc[]
+Get reviews for a movie:
 
-Get a review:
-
-.request
-include::{snippets}/get review/http-request.adoc[]
-
-.response
-include::{snippets}/get review/http-response.adoc[]
-.response-fields
-include::{snippets}/get review/response-fields.adoc[]
+operation::get reviews[snippets='http-request,path-parameters,http-response,response-fields']

@@ -10,5 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Review {
-    private String review;
+    private String review = "";
 }

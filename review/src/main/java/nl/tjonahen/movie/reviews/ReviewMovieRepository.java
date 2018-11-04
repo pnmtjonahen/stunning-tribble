@@ -1,5 +1,6 @@
 package nl.tjonahen.movie.reviews;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -8,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface ReviewMovieRepository extends JpaRepository<ReviewMovie, Long>{
 
-    public ReviewMovie findByMovieId(Long movieId);
+    public List<ReviewMovie> findByMovieId(Long movieId);
 
 }
