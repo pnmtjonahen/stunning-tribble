@@ -29,10 +29,9 @@ class IndexView {
 
     search() {
         this.clearSearchResult();
-        
-        const search = document.getElementById("search").firstChild.textContent;
-        console.log(search);
-        
+
+        const search = document.getElementById("search").value;
+
         fetch("http://localhost:8088/api/movies?query=" + search).then(res => res.json()).then(json => {
 
             json.forEach(searchresult => {
@@ -43,27 +42,39 @@ class IndexView {
         });
     }
 
-    replaceTemplateValues(node, blog) {
+    onSearch(event) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            this.search();
+        }
+    }
+
+    replaceTemplateValues(node, searchresult) {
 
         Array.from(node.childNodes)
                 .filter(n => n.nodeType === Node.TEXT_NODE).forEach(n => {
             let name;
             if ((name = /\{(.*?)\}/.exec(n.nodeValue)) !== null) {
-                n.nodeValue = blog[name[1]];
+                n.nodeValue = searchresult[name[1]];
             }
         });
 
         Array.from(node.childNodes)
-                .filter(n => n.nodeType !== Node.TEXT_NODE).forEach(n => {
-            Array.from(n.attributes).forEach(attr => {
-                Object.keys(blog).forEach(name => {
-                    if (attr.value === "{" + name + "}") {
-                        attr.value = blog[name];
+                .filter(n => n.nodeType !== Node.TEXT_NODE)
+                .forEach(n => {
+                    if (n.attributes && n.attributes.length > 0) {
+                        Array.from(n.attributes).forEach(attr => {
+                            Object.keys(searchresult).forEach(name => {
+                                if (attr.value === "{" + name + "}") {
+                                    attr.value = searchresult[name];
+                                }
+                            });
+                        });
                     }
+                    this.replaceTemplateValues(n, searchresult);
                 });
-            });
-            this.replaceTemplateValues(n, blog);
-        });
 
         return node;
     }
