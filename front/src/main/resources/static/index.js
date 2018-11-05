@@ -76,6 +76,12 @@ class IndexView {
                     this.replaceTemplateValues(n, searchresult);
                 });
 
+        Array.from(node.getElementsByTagName("img"))
+                .filter(img => img.src)
+                .forEach(img => {
+                    console.log(img);
+                });
+
         return node;
     }
 
