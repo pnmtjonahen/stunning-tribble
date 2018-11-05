@@ -21,6 +21,7 @@ public class Movie {
     private int id;
     private String title;
     private String description;
-    private String review;
+    private String poster;
+    private List<String> review;
     private List<String> genre;
 }
