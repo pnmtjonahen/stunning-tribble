@@ -33,7 +33,7 @@ public class MovieController {
                     .review(reviewService.getReview(m.getId()))
                     .genre(genreRepository.findAllById(m.getGenre_ids()).stream().map(g -> g.getName()).collect(Collectors.toList()))
                     .poster(m.getPoster_path() == null ? "/img/na.jpg" : "https://image.tmdb.org/t/p/w200" + m.getPoster_path() )
-                    .backdrop(m.getBackdrop_path() == null ? "/img/na.jpg" : "https://image.tmdb.org/t/p/w500" + m.getBackdrop_path() )
+                    .backdrop(m.getBackdrop_path() == null ? "/img/na-backdrop.png" : "https://image.tmdb.org/t/p/w500" + m.getBackdrop_path() )
                     .title(m.getOriginal_title())
                     .description(m.getOverview())
                     .id(m.getId())
