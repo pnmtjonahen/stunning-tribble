@@ -2,14 +2,14 @@
 
 This is the moview review services
 
-Getting all the reviews:
+== Getting all the reviews:
 
 operation::reviews[]
 
-Adding a review:
+== Adding a review:
 
 operation::add review[snippets='http-request,request-fields,http-response']
 
-Get reviews for a movie:
+== Get reviews for a movie:
 
 operation::get reviews[snippets='http-request,path-parameters,http-response,response-fields']

@@ -51,15 +51,14 @@
                     <br>
 
                     <!-- Accordion -->
-                    <!--                    <div class="w3-card w3-round">
-                                            <div class="w3-white">
-                                                <button onclick="myFunction('Demo1')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-circle-o-notch fa-fw w3-margin-right"></i> My Watchlist</button>
-                                                <div id="Demo1" class="w3-hide w3-container">
-                                                    <p>Some text..</p>
-                                                </div>
-                                            </div>      
-                                        </div>
-                                        <br>-->
+                    <div class="w3-card w3-round">
+                        <div class="w3-white">
+                            <button onclick="view.toggelWatchList('watchlist')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-circle-o-notch fa-fw w3-margin-right"></i> My Watchlist</button>
+                            <div id="watchlist" class="w3-hide w3-container">
+                            </div>
+                        </div>      
+                    </div>
+                    <br>
 
 
 
@@ -87,8 +86,8 @@
                             <hr class="w3-clear">
                             <p>{description}</p>
                             <img id="backdrop" src="{backdrop}" style="width:100%" alt="poster" class="w3-margin-bottom">
-                            <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Add to watchlist</button> 
-                            <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Review</button> 
+<!--                            <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Add to watchlist</button> 
+                            <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Review</button> -->
                         </div>
                     </div>
                     <!-- End Middle Column -->
@@ -128,18 +127,6 @@
         </footer>
 
         <script>
-            // Accordion
-            function myFunction(id) {
-                var x = document.getElementById(id);
-                if (x.className.indexOf("w3-show") == -1) {
-                    x.className += " w3-show";
-                    x.previousElementSibling.className += " w3-theme-d1";
-                } else {
-                    x.className = x.className.replace("w3-show", "");
-                    x.previousElementSibling.className =
-                            x.previousElementSibling.className.replace(" w3-theme-d1", "");
-                }
-            }
 
             // Used to toggle the menu on smaller screens when clicking on the menu button
             function openNav() {

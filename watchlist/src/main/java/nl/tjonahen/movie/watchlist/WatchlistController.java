@@ -3,6 +3,7 @@ package nl.tjonahen.movie.watchlist;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class WatchlistController {
     private final WatchlistRepository repository;
     
+    @CrossOrigin
     @GetMapping
     public List<WatchlistMovie> get() {
         return repository.findAll();
     }
     
+    @CrossOrigin    
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void post(@RequestBody WatchlistMovie newMovie) {

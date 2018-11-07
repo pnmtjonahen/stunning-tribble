@@ -1,0 +1,15 @@
+= Movie Review service
+
+This is the movie watchlist services
+
+== Getting the watchlist:
+
+operation::watchlist[]
+
+== Adding a movie to the watchlist:
+
+operation::add to watchlist[snippets='http-request,request-fields,http-response']
+
+== Update movie on watchlist:
+
+operation::update watched movie[snippets='http-request,path-parameters,http-response']

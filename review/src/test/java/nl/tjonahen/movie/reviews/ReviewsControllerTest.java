@@ -18,9 +18,11 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -35,14 +37,25 @@ public class ReviewsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    
+    @Test
+    public void testCrossOrigin() throws Exception {
+        this.mockMvc.perform(options("/api/reviews")
+                .header("Access-Control-Request-Method", "GET")
+                .header("Origin", "http://www.tjonahen.nl"))
+                .andDo(print())
+                .andExpect(header().string("Access-Control-Allow-Origin", "*"))
+                .andExpect(header().string("Access-Control-Allow-Methods", "GET"));
+
+    }
+    
 
     @Test
     public void testFlow() throws Exception {
         this.mockMvc.perform(get("/api/reviews"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("[]")))
-                .andDo(document("reviews"));
+                .andExpect(content().string(containsString("[]")));
 
         this.mockMvc.perform(post("/api/reviews")
                 .contentType(APPLICATION_JSON)
