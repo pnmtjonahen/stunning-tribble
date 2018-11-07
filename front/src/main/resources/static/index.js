@@ -16,18 +16,21 @@ if (!String.prototype.format) {
 
 class IndexView {
     constructor() {
+        this.eventSource;
         this.searchResultTemplate = document.getElementById("search-result");
         this.searchResultContainer = this.searchResultTemplate.parentNode;
         this.searchResultTemplate.removeAttribute("id");
         this.clearSearchResult();
+        const watchlistContainer = document.getElementById("watchlist");
 
-        fetch("http://localhost:8088/api/watchlist").then(res => res.json()).then(json => {
-            const watchlistContainer = document.getElementById("watchlist");
-
-            json.forEach(wl => {
-                watchlistContainer.appendChild(this.newMovieToWatch(wl));
-            });
-        });
+        this.eventSource = new EventSource("http://localhost:8088/api/watchlist");
+        this.eventSource.onmessage = (e) => {
+            var wl = JSON.parse(e.data);
+            watchlistContainer.appendChild(this.newMovieToWatch(wl));
+        };
+        this.eventSource.onerror = (e) => {
+            console.log(e);
+        };
     }
 
     newMovieToWatch(wl) {
@@ -90,21 +93,20 @@ class IndexView {
                 watched: "false"
             };
 
-            fetch("http://localhost:8088/api/watchlist",
+// direct call bypass gate way as it does not support the OPTIONS
+
+            fetch("http://localhost:8182/api/watchlist",
                     {
                         headers: {
-//                            'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
                         method: "POST",
                         body: JSON.stringify(watchmovie)
                     })
                     .then(res => {
-//                        document.getElementById('orderstatus').style.display = 'none';
-//                        this.clearStatusContainer();
-//                        document.getElementById('thankyou').style.display = 'block';
+//                        document.getElementById('added').style.display = 'block';
 //                        setTimeout(function () {
-//                            document.getElementById('thankyou').style.display = 'none';
+//                            document.getElementById('added').style.display = 'none';
 //                        }, 2000);
                     })
                     .catch(res => {
@@ -113,7 +115,7 @@ class IndexView {
         };
         return btn;
     }
-    
+
     addReviewButton(searchresult) {
         const btn = document.createElement("button");
         btn.type = "button";
