@@ -142,10 +142,11 @@ class IndexView {
 
             pTitle.appendChild(document.createTextNode(searchresult.title));
             this.openReview(() => {
+                const review = document.getElementById("review-text").textContent;
                 const movieReview = {
                     movieId: searchresult.id,
                     title: searchresult.title,
-                    review: "Lorum ipsum....."
+                    review: review
                 };
 
                 fetch("http://localhost:8088/api/reviews",
