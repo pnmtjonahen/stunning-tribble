@@ -95,7 +95,7 @@ class IndexView {
 
 // direct call bypass gate way as it does not support the OPTIONS
 
-            fetch("http://localhost:8182/api/watchlist",
+            fetch("http://localhost:8088/api/watchlist",
                     {
                         headers: {
                             'Content-Type': 'application/json'
