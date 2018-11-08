@@ -86,25 +86,19 @@
                             <hr class="w3-clear">
                             <p>{description}</p>
                             <img id="backdrop" src="{backdrop}" style="width:100%" alt="poster" class="w3-margin-bottom">
-<!--                            <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Add to watchlist</button> 
-                            <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Review</button> -->
+                            <!--                            <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Add to watchlist</button> 
+                                                        <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Review</button> -->
                         </div>
                     </div>
                     <!-- End Middle Column -->
                 </div>
 
                 <!-- Right Column -->
-                <div class="w3-col m2">
-                    <!--                    <div class="w3-card w3-round w3-white w3-center">
-                                            <div class="w3-container">
-                                                <p>Upcoming Events:</p>
-                                                <img src="/w3images/forest.jpg" alt="Forest" style="width:100%;">
-                                                <p><strong>New movies</strong></p>
-                                                <p>Friday 15:00</p>
-                                                <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
-                                            </div>
-                                        </div>
-                                        <br>-->
+                <div class="w3-col m2" id="reviews">
+                    <div class="w3-card w3-round w3-white w3-center">
+                        <p class="w3-block w3-theme-l1">What other people are saying:</p>
+                    </div>
+                    <br>
 
 
                     <!-- End Right Column -->
@@ -130,6 +124,22 @@
             <div class="w3-modal-content w3-animate-zoom">
                 <div class="w3-container">
                     <h5>Added to watchlist</h5>                    
+                </div>
+            </div>
+        </div>
+        <!--add new review-->
+        <div id="new-review" class="w3-modal">
+            <div class="w3-modal-content w3-animate-zoom">
+                <div class="w3-container w3-theme-d5">
+                    <span onclick="view.closeReview()" class="w3-button w3-display-topright w3-xxlarge fa fa-close"></span>
+                    <h1>Enter Review Comments</h1>
+                </div>
+                <div class="w3-container">
+                    <p id="review-title"></p>
+                    <p>
+                        <button class="w3-button w3-theme-d1 w3-margin-bottom" id="sumbit-review">Submit</button>
+                        <button class="w3-button w3-theme-d2 w3-margin-bottom" onclick="view.closeReview()">Cancel</button>
+                    </p>
                 </div>
             </div>
         </div>

@@ -21,22 +21,34 @@ class IndexView {
         this.searchResultContainer = this.searchResultTemplate.parentNode;
         this.searchResultTemplate.removeAttribute("id");
         this.clearSearchResult();
-        const watchlistContainer = document.getElementById("watchlist");
+        const reviewContainer = document.getElementById("reviews");
 
-        this.eventSource = new EventSource("http://localhost:8088/api/watchlist");
+        this.eventSource = new EventSource("http://localhost:8088/api/reviews");
         this.eventSource.onmessage = (e) => {
-            var wl = JSON.parse(e.data);
-            watchlistContainer.appendChild(this.newMovieToWatch(wl));
+            var rv = JSON.parse(e.data);
+            reviewContainer.appendChild(this.newReview(rv));
+            reviewContainer.appendChild(document.createElement("br"));
         };
         this.eventSource.onerror = (e) => {
             console.log(e);
         };
     }
 
-    newMovieToWatch(wl) {
-        const p = document.createElement("p");
-        p.appendChild(document.createTextNode(wl.title));
-        return p;
+    newReview(rv) {
+        const container = document.createElement("div");
+        container.className = " w3-card w3-round w3-white w3-center";
+
+        const div = document.createElement("div");
+        div.className = "w3-container";
+        const pTitle = document.createElement("p");
+        pTitle.appendChild(document.createTextNode(rv.title));
+        div.appendChild(pTitle);
+        const pReview = document.createElement("p");
+        pReview.appendChild(document.createTextNode(rv.review));
+        div.appendChild(pReview);
+
+        container.appendChild(div);
+        return container;
     }
     clearSearchResult() {
         while (this.searchResultContainer.firstChild)
@@ -93,8 +105,6 @@ class IndexView {
                 watched: "false"
             };
 
-// direct call bypass gate way as it does not support the OPTIONS
-
             fetch("http://localhost:8088/api/watchlist",
                     {
                         headers: {
@@ -124,6 +134,40 @@ class IndexView {
         i.className = "fa fa-comment";
         btn.appendChild(i);
         btn.appendChild(document.createTextNode(" Review"));
+        btn.onclick = () => {
+            // update review dialog with title and other info
+            var pTitle = document.getElementById("review-title");
+            while (pTitle.firstChild)
+                pTitle.removeChild(pTitle.firstChild);
+
+            pTitle.appendChild(document.createTextNode(searchresult.title));
+            this.openReview(() => {
+                const movieReview = {
+                    movieId: searchresult.id,
+                    title: searchresult.title,
+                    review: "Lorum ipsum....."
+                };
+
+                fetch("http://localhost:8088/api/reviews",
+                        {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            method: "POST",
+                            body: JSON.stringify(movieReview)
+                        })
+                        .then(res => {
+//                        document.getElementById('added').style.display = 'block';
+//                        setTimeout(function () {
+//                            document.getElementById('added').style.display = 'none';
+//                        }, 2000);
+                        })
+                        .catch(res => {
+                            console.log(res);
+                        });
+                this.closeReview();
+            });
+        };
         return btn;
     }
 
@@ -165,6 +209,13 @@ class IndexView {
             x.previousElementSibling.className =
                     x.previousElementSibling.className.replace(" w3-theme-d1", "");
         }
+    }
+    openReview(onclick) {
+        document.getElementById("sumbit-review").onclick = onclick;
+        document.getElementById('new-review').style.display = 'block';
+    }
+    closeReview() {
+        document.getElementById('new-review').style.display = 'none';
     }
 
 }

@@ -17,12 +17,10 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -38,22 +36,6 @@ public class WatchlistControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-//    @Test
-    public void testCrossOrigin() throws Exception {
-        this.mockMvc.perform(options("/api/watchlist")
-                .header("Access-Control-Request-Method", "GET")
-                .header("Origin", "http://www.tjonahen.nl"))
-                .andDo(print())
-                .andExpect(header().string("Access-Control-Allow-Origin", "*"))
-                .andExpect(header().string("Access-Control-Allow-Methods", "GET"));
-        this.mockMvc.perform(options("/api/watchlist")
-                .header("Access-Control-Request-Method", "POST")
-                .header("Origin", "http://www.tjonahen.nl"))
-                .andDo(print())
-                .andExpect(header().string("Access-Control-Allow-Origin", "*"))
-                .andExpect(header().string("Access-Control-Allow-Methods", "POST"));
-
-    }
 
     @Test
     public void testFlow() throws Exception {
