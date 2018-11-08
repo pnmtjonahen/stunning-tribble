@@ -34,13 +34,13 @@ public class WatchlistController {
     private final WatchlistRepository repository;
     private final WatchlistMovieEventProducer watchlistMovieProducer;
 
-    @CrossOrigin
+//    @CrossOrigin
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<WatchlistMovie> get() {
-        return Flux.concat(watchlistMovieProducer, Flux.fromIterable(repository.findAll()));
+        return Flux.merge(watchlistMovieProducer, Flux.fromIterable(repository.findAll()));
     }
 
-    @CrossOrigin
+//    @CrossOrigin
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void post(@RequestBody WatchlistMovie newMovie) {

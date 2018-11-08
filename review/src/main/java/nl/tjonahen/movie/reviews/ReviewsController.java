@@ -26,7 +26,7 @@ public class ReviewsController {
 
     private final ReviewMovieRepository repository;
     
-    @CrossOrigin    
+//    @CrossOrigin    
     @GetMapping
     public List<ReviewMovie> get() {
         return repository.findAll();

@@ -25,7 +25,7 @@ public class MovieController {
     private final GenreRepository genreRepository;
     private final ReviewService reviewService;
     
-    @CrossOrigin
+//    @CrossOrigin
     @GetMapping
     public List<Movie> search(@RequestParam("query") String query) {
         return movieSearchService.search(query).stream().map(m -> {
