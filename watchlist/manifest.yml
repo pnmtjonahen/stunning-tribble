@@ -6,3 +6,4 @@ applications:
       path: target/watchlist-0.0.1-SNAPSHOT.jar
       services:
         - myMysqlDB
+        - myServiceDiscovery

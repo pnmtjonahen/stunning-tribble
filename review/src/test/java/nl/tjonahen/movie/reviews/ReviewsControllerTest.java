@@ -43,12 +43,12 @@ public class ReviewsControllerTest {
     @Test
     public void testFlow() throws Exception {
 // Todo: test reactive Flux events
-//        this.mockMvc.perform(get("/api/reviews"))
+//        this.mockMvc.perform(get("/api/review"))
 //                .andDo(print())
 //                .andExpect(status().isOk())
 //                .andExpect(content().string(containsString("[]")));
 
-        this.mockMvc.perform(post("/api/reviews")
+        this.mockMvc.perform(post("/api/review")
                 .contentType(APPLICATION_JSON)
                 .content("{\"movieId\":\"1\", \"title\":\"test title1\", \"review\":\"Just a test review\"}")
                 .accept(APPLICATION_JSON))
@@ -60,7 +60,7 @@ public class ReviewsControllerTest {
                         fieldWithPath("review").description("The review.")
                 )));
 
-//        this.mockMvc.perform(get("/api/reviews"))
+//        this.mockMvc.perform(get("/api/review"))
 //                .andDo(print())
 //                .andExpect(status().isOk())
 //                .andExpect(content().string(containsString("[{\"id\":1,\"movieId\":1,\"title\":\"test title1\",\"review\":\"Just a test review\"}]")))
@@ -73,7 +73,7 @@ public class ReviewsControllerTest {
 //                                fieldWithPath("[].review").description("The review.")
 //                        )));
 
-        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/api/reviews/movie/{id}", 1))
+        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/api/review/movie/{id}", 1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("[{\"movieId\":1,\"title\":\"test title1\",\"review\":\"Just a test review\"}]")))
@@ -88,7 +88,7 @@ public class ReviewsControllerTest {
                                 fieldWithPath("[].review").description("The review.")
                         )));
 
-        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/api/reviews/{id}", 1))
+        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/api/review/{id}", 1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("{\"movieId\":1,\"title\":\"test title1\",\"review\":\"Just a test review\"}")))

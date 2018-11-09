@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author Philippe Tjon - A - Hen
  */
-@FeignClient(name = "reviews", decode404 = true)
+@FeignClient(name = "review", decode404 = true)
 public interface ReviewClient {
     @RequestMapping(method = RequestMethod.GET, value = "/api/review/movie/{id}")
     List<Review> getReview(@PathVariable("id") int movieId);

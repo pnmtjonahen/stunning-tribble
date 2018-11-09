@@ -3,6 +3,7 @@
 applications:
     - name : ptj-movie-review
       buildpack: java_buildpack
-      path: target/reviews-0.0.1-SNAPSHOT.jar
+      path: target/review-0.0.1-SNAPSHOT.jar
       services:
         - myMysqlDB
+        - myServiceDiscovery

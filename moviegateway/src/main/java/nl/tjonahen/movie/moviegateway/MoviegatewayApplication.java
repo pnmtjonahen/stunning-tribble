@@ -12,6 +12,8 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
@@ -23,7 +25,11 @@ public class MoviegatewayApplication {
         SpringApplication.run(MoviegatewayApplication.class, args);
     }
 
-
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        http.authorizeExchange().anyExchange().permitAll();
+        return http.build();
+    }
 
     @Bean
     public CorsConfiguration corsConfiguration(RoutePredicateHandlerMapping routePredicateHandlerMapping) {
@@ -31,20 +37,24 @@ public class MoviegatewayApplication {
         Arrays.asList(HttpMethod.OPTIONS, HttpMethod.PUT, HttpMethod.GET, HttpMethod.DELETE, HttpMethod.POST)
                 .forEach(m -> corsConfiguration.addAllowedMethod(m));
         corsConfiguration.addAllowedOrigin("*");
-        routePredicateHandlerMapping.setCorsConfigurations(new HashMap<String, CorsConfiguration>() 
-        {{ put("/**", corsConfiguration); }}
+        routePredicateHandlerMapping.setCorsConfigurations(
+                new HashMap<String, CorsConfiguration>() {
+            {
+                put("/**", corsConfiguration);
+            }
+        }
         );
         return corsConfiguration;
     }
 
     @Bean
     public RouteLocator movieRoutes(RouteLocatorBuilder builder,
-            @Value("${movies}") String movies,
-            @Value("${review}") String reviews,
+            @Value("${movie}") String movie,
+            @Value("${review}") String review,
             @Value("${watchlist}") String watchlist) {
         return builder.routes()
-                .route(p -> p.path("/api/movies").uri(movies))
-                .route(p -> p.path("/api/review").uri(reviews))
+                .route(p -> p.path("/api/movies").uri(movie))
+                .route(p -> p.path("/api/review").uri(review))
                 .route(p -> p.path("/api/watchlist").uri(watchlist))
                 .build();
     }
