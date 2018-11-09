@@ -12,7 +12,29 @@ if (!String.prototype.format) {
 }
 
 
+class Configuration {
+    constructor() {
+        this.cnf = config;
+        this.review = "{0}/api/review";
+        this.watchlist = "{0}/api/watchlist";
+        this.movies = "{0}/api/movies";
+    }
 
+    reviewUrl() {
+        return this.review.format(this.cnf.http_server);
+    }
+
+    watchlistUrl() {
+        return this.watchlist.format(this.cnf.http_server);
+    }
+
+    moviesUrl() {
+        return this.movies.format(this.cnf.http_server);
+    }
+
+}
+
+const configuration = new Configuration();
 
 class IndexView {
     constructor() {
@@ -23,7 +45,7 @@ class IndexView {
         this.clearSearchResult();
         const reviewContainer = document.getElementById("reviews");
 
-        this.eventSource = new EventSource("http://localhost:8088/api/reviews");
+        this.eventSource = new EventSource(configuration.reviewUrl());
         this.eventSource.onmessage = (e) => {
             var rv = JSON.parse(e.data);
             reviewContainer.appendChild(this.newReview(rv));
@@ -50,9 +72,15 @@ class IndexView {
         container.appendChild(div);
         return container;
     }
+
+    clearContainer(c) {
+        while (c.firstChild)
+            c.removeChild(c.firstChild);
+
+    }
+
     clearSearchResult() {
-        while (this.searchResultContainer.firstChild)
-            this.searchResultContainer.removeChild(this.searchResultContainer.firstChild);
+        this.clearContainer(this.searchResultContainer);
     }
 
     search() {
@@ -60,7 +88,7 @@ class IndexView {
 
         const search = document.getElementById("search").value;
 
-        fetch("http://localhost:8088/api/movies?query=" + search).then(res => res.json()).then(json => {
+        fetch(configuration.moviesUrl() + "?query=" + search).then(res => res.json()).then(json => {
 
             json.forEach(searchresult => {
                 this.searchResultContainer.appendChild(this.addAction(
@@ -105,7 +133,7 @@ class IndexView {
                 watched: "false"
             };
 
-            fetch("http://localhost:8088/api/watchlist",
+            fetch(configuration.watchlistUrl(),
                     {
                         headers: {
                             'Content-Type': 'application/json'
@@ -137,19 +165,20 @@ class IndexView {
         btn.onclick = () => {
             // update review dialog with title and other info
             var pTitle = document.getElementById("review-title");
-            while (pTitle.firstChild)
-                pTitle.removeChild(pTitle.firstChild);
+            this.clearContainer(pTitle);
 
             pTitle.appendChild(document.createTextNode(searchresult.title));
             this.openReview(() => {
-                const review = document.getElementById("review-text").textContent;
+                const reviewNode = document.getElementById("review-text");
+                const review = reviewNode.textContent;
+                this.clearContainer(reviewNode);
                 const movieReview = {
                     movieId: searchresult.id,
                     title: searchresult.title,
                     review: review
                 };
 
-                fetch("http://localhost:8088/api/reviews",
+                fetch(configuration.reviewUrl(),
                         {
                             headers: {
                                 'Content-Type': 'application/json'
@@ -200,11 +229,20 @@ class IndexView {
         return node;
     }
 
-    toggelWatchList(id) {
-        var x = document.getElementById(id);
+    toggelWatchList() {
+        var x = document.getElementById("watchlist");
         if (x.className.indexOf("w3-show") === -1) {
+            this.clearContainer(x);
             x.className += " w3-show";
             x.previousElementSibling.className += " w3-theme-d1";
+
+            fetch(configuration.watchlistUrl()).then(res => res.json()).then(json => {
+                json.forEach(wl => {
+                    const p = document.createElement("p");
+                    p.appendChild(document.createTextNode(wl.title));
+                    x.appendChild(p);
+                });
+            });
         } else {
             x.className = x.className.replace("w3-show", "");
             x.previousElementSibling.className =

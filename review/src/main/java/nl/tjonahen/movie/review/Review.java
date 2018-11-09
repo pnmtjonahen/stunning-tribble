@@ -1,6 +1,7 @@
-package nl.tjonahen.movie.reviews;
+package nl.tjonahen.movie.review;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,7 +15,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class ReviewMovie {
+public class Review {
 
     @Id
     @GeneratedValue
@@ -25,4 +26,6 @@ public class ReviewMovie {
     private String title;
     @JsonView(PublicView.class)
     private String review;
+    
+    private LocalDateTime createdon;
 }

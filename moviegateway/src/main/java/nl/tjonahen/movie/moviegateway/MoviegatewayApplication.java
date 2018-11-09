@@ -13,9 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.reactive.config.CorsRegistry;
-import org.springframework.web.reactive.config.WebFluxConfigurer;
-import org.springframework.web.reactive.config.WebFluxConfigurerComposite;
 
 @Configuration
 @SpringBootApplication
@@ -26,18 +23,7 @@ public class MoviegatewayApplication {
         SpringApplication.run(MoviegatewayApplication.class, args);
     }
 
-//    @Bean
-//    public WebFluxConfigurer corsConfigurer() {
-//        return new WebFluxConfigurerComposite() {
-//
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/**")
-//                        .allowedOrigins("*")
-//                        .allowedMethods("*");
-//            }
-//        };
-//    }
+
 
     @Bean
     public CorsConfiguration corsConfiguration(RoutePredicateHandlerMapping routePredicateHandlerMapping) {
@@ -54,11 +40,11 @@ public class MoviegatewayApplication {
     @Bean
     public RouteLocator movieRoutes(RouteLocatorBuilder builder,
             @Value("${movies}") String movies,
-            @Value("${reviews}") String reviews,
+            @Value("${review}") String reviews,
             @Value("${watchlist}") String watchlist) {
         return builder.routes()
                 .route(p -> p.path("/api/movies").uri(movies))
-                .route(p -> p.path("/api/reviews").uri(reviews))
+                .route(p -> p.path("/api/review").uri(reviews))
                 .route(p -> p.path("/api/watchlist").uri(watchlist))
                 .build();
     }

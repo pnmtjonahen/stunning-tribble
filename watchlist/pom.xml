@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>watchlist</name>
-    <description>Watchlist</description>
+    <description>Moview watchlist</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

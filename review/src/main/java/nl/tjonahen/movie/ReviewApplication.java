@@ -8,10 +8,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class ReviewsApplication extends WebSecurityConfigurerAdapter {
+public class ReviewApplication extends WebSecurityConfigurerAdapter {
 
     public static void main(String[] args) {
-        SpringApplication.run(ReviewsApplication.class, args);
+        SpringApplication.run(ReviewApplication.class, args);
     }
 
     @Override

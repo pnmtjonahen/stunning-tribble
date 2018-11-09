@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import nl.tjonahen.movie.genre.GenreRepository;
 import nl.tjonahen.movie.review.ReviewService;
 import nl.tjonahen.movie.themoviedb.MovieSearchService;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +24,6 @@ public class MovieController {
     private final GenreRepository genreRepository;
     private final ReviewService reviewService;
     
-//    @CrossOrigin
     @GetMapping
     public List<Movie> search(@RequestParam("query") String query) {
         return movieSearchService.search(query).stream().map(m -> {

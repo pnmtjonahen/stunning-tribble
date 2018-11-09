@@ -1,6 +1,7 @@
-package nl.tjonahen.movie.reviews;
+package nl.tjonahen.movie.review;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,35 +28,36 @@ import reactor.core.publisher.Flux;
  * @author Philippe Tjon - A - Hen
  */
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api/review")
 @RequiredArgsConstructor
-public class ReviewsController {
+public class ReviewController {
 
-    private final ReviewMovieRepository repository;
+    private final ReviewRepository repository;
     private final ReviewEventProducer reviewEventProducer;
     
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ReviewMovie> get() {
-        return Flux.merge(reviewEventProducer, Flux.fromIterable(repository.findAll()));
+    public Flux<Review> get() {
+        return Flux.merge(reviewEventProducer, Flux.fromIterable(repository.findTop5OrderByCreatedon()));
     }
     
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void post(@RequestBody ReviewMovie newMovie) {
+    public void post(@RequestBody Review newMovie) {
         reviewEventProducer.send(newMovie);
+        newMovie.setCreatedon(LocalDateTime.now());
         repository.save(newMovie);
     }
     
     @GetMapping("/movie/{movieid}")
     @JsonView(PublicView.class)    
-    public List<ReviewMovie> get(@PathVariable("movieid") Long movieId) {
+    public List<Review> get(@PathVariable("movieid") Long movieId) {
         return repository.findByMovieId(movieId);
     }
     
     @GetMapping("/{id}")
     @JsonView(PublicView.class)    
-    public ResponseEntity<ReviewMovie> getReview(@PathVariable("id") Long id) {
-        final Optional<ReviewMovie> review = repository.findById(id);
+    public ResponseEntity<Review> getReview(@PathVariable("id") Long id) {
+        final Optional<Review> review = repository.findById(id);
         if (review.isPresent()) {
             return ResponseEntity.ok(review.get());
         }
@@ -65,18 +66,18 @@ public class ReviewsController {
 }
 
 @Service
-class ReviewEventProducer implements Publisher<ReviewMovie> {
+class ReviewEventProducer implements Publisher<Review> {
 
     private final List<ReviewEventSubscription> subscribtions = new ArrayList<>();
 
     @Override
-    public void subscribe(Subscriber<? super ReviewMovie> s) {
+    public void subscribe(Subscriber<? super Review> s) {
         final ReviewEventSubscription messageSubscription = new ReviewEventSubscription(s);
         s.onSubscribe(messageSubscription);
         subscribtions.add(messageSubscription);
     }
 
-    public void send(ReviewMovie m) {
+    public void send(Review m) {
 
         subscribtions.forEach(s -> {
             s.onNext(m);
@@ -89,7 +90,7 @@ class ReviewEventProducer implements Publisher<ReviewMovie> {
 @RequiredArgsConstructor
 class ReviewEventSubscription implements Subscription {
 
-    private final Subscriber<? super ReviewMovie> subscriber;
+    private final Subscriber<? super Review> subscriber;
     private long count = 0;
 
     @Override
@@ -102,7 +103,7 @@ class ReviewEventSubscription implements Subscription {
         this.count = 0;
     }
 
-    public void onNext(ReviewMovie m) {
+    public void onNext(Review m) {
         if (this.count-- > 0) {
             subscriber.onNext(m);
         }

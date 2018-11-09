@@ -1,4 +1,4 @@
-package nl.tjonahen.movie.reviews;
+package nl.tjonahen.movie.review;
 
 /**
  *
