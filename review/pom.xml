@@ -10,11 +10,15 @@
 
     <name>movie-review</name>
     <description>Moview reviews</description>
+    <!-- 
+    before upgrading any of the spring-boot, spring-cloud, spring-cloud services 
+    check the following dependency info https://start.spring.io/actuator/info
+    -->
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.0.RELEASE</version>
+        <version>2.0.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
