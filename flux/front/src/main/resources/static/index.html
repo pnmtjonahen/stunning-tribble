@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <title>Event</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <style>
+        body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+    </style>
+    <body class="w3-light-grey">
+
+        <!-- w3-content defines a container for fixed size centered content, 
+        and is wrapped around the whole page content, except for the footer in this example -->
+        <div class="w3-content" style="max-width:1400px">
+            <!-- Grid -->
+            <div class="w3-row">
+
+                <!-- Blog entries -->
+                <div class="w3-col l8 s12">
+                    <!-- Blog entry -->
+                    <div class="w3-card-4 w3-margin w3-white">
+                        <div class="w3-container w3-dark-grey">
+                            <h2>New Event</h2>
+                        </div>
+
+                        <div class="w3-container">
+                            <label>Body</label>
+                            <input class="w3-input" type="text" id ="eventinput"/>
+                            <div class="w3-row">
+                                <div class="w3-col m8 s12">
+                                    <p><button class="w3-button w3-padding-large w3-white w3-border" id="send"><b>Send »</b></button></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="w3-card-4 w3-margin w3-white">
+                        <div class="w3-container w3-dark-grey">
+                            <h2>Events</h2>
+                        </div>
+                        <div  class="w3-container">                        
+                        <ul  class="w3-ul" id="eventoutput">
+                            
+                        </ul>
+                            </div>
+                    </div>
+                    <!-- Blog entry -->
+
+                    <!-- END BLOG ENTRIES -->
+                </div>
+
+
+                <!-- END GRID -->
+            </div><br>
+
+            <!-- END w3-content -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="w3-container w3-dark-grey w3-padding-32 w3-margin-top">
+            <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+        </footer>
+        <script src="configuration.js"></script>
+        <script src="index.js"></script>
+
+    </body>
+</html>
+<!--
+<!DOCTYPE html>
+<html>
+    <title>Events</title>
+    <meta charset="UTF-8">
+    <body>
+
+        <div>
+            <input type="text" id="eventinput"/>
+            <button type="button" id="submit">Submit</button>
+        </div>
+        <div id ="eventoutput">
+            
+        </div>
+        <script src="configuration.js"></script>
+        <script src="index.js"></script>
+    </body>
+</html> -->
