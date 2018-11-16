@@ -1,0 +1,7 @@
+nl/tjonahen/messages/MessageService.class
+nl/tjonahen/messages/MessagesServiceApplication.class
+nl/tjonahen/messages/Message.class
+nl/tjonahen/messages/MessagesController.class
+nl/tjonahen/messages/MessageRepository.class
+nl/tjonahen/messages/MessageService$1.class
+nl/tjonahen/messages/MessageSender.class

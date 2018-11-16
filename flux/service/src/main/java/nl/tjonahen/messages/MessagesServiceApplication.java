@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -47,18 +48,30 @@ public class MessagesServiceApplication {
 @RequiredArgsConstructor
 class MessagesController {
 
-    private final MessageService messageService;
+    private final MessageService service;
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Message> getAll() {
-        return Flux.merge(messageService.getNewMessages(), messageService.getStoredMessages());
+    public Flux<Message> get() {
+        return Flux.merge(service.getNewMessages(), service.getStoredMessages());
+    }
+
+    @GetMapping("/download")
+    public List<Message> download() {
+        return service.getAllMessages();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void put(@RequestBody Message ev) {
-        messageService.put(ev);
+    public void add(@RequestBody Message msg) {
+        service.add(msg);
     }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void addAll(@RequestBody List<Message> exportedMessages) {
+        service.addAll(exportedMessages);
+    }
+
 }
 
 @Slf4j
@@ -91,15 +104,31 @@ class MessageService {
         return Flux.fromStream(repository.findAll().stream());
     }
 
+    public List<Message> getAllMessages() {
+        return repository.findAll();
+    }
+
     @Async
-    public void put(Message ev) {
-        log.info("Message received {}", ev);
-        repository.save(ev);
+    public void add(Message msg) {
+        log.info("Message received {}", msg);
+        if ("/clear".equals(msg.getBody())) {
+            this.deleteAll();
+            return;
+        }
+        repository.save(msg);
 
         messageSenders.removeAll(messageSenders.stream().filter(MessageSender::isCancelled).collect(Collectors.toList()));
 
-        messageSenders.forEach(ms -> ms.send(ev));
+        messageSenders.forEach(ms -> ms.send(msg));
 
+    }
+
+    public void addAll(List<Message> messages) {
+        repository.saveAll(messages);
+    }
+
+    public void deleteAll() {
+        repository.deleteAll();
     }
 
 }
@@ -121,9 +150,8 @@ class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String msgFrom;
     @Lob
-    private String msgBody;
+    private String body;
 }
 
 interface MessageRepository extends JpaRepository<Message, Long> {

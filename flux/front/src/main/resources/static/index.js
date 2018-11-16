@@ -43,39 +43,44 @@ class IndexView {
             console.log(e);
         };
 
-        this.addEventButton();
     }
 
     newEvent(rv) {
         const container = document.createElement("li");
         container.appendChild(document.createTextNode(rv.id + " : "));
-        container.appendChild(document.createTextNode(rv.msgBody));
+        container.appendChild(document.createTextNode(rv.body));
         return container;
     }
 
-    addEventButton() {
-        const btn = document.getElementById("send");
-        btn.onclick = () => {
-            const eventInput = document.getElementById("eventinput");
-            const eventBody = {
-                msgFrom: 'sample',
-                msgBody: eventInput.value
-            };
+    onEnterEvent(event) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            this.addEvent();
+        }
+    }
 
-            fetch(configuration.eventUrl(),
-                    {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        method: "POST",
-                        body: JSON.stringify(eventBody)
-                    })
-                    .then(res => {
-                    })
-                    .catch(res => {
-                        console.log(res);
-                    });
+    addEvent() {
+        const eventInput = document.getElementById("eventinput");
+        const eventBody = {
+            body: eventInput.value
         };
+
+        fetch(configuration.eventUrl(),
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: "POST",
+                    body: JSON.stringify(eventBody)
+                })
+                .then(res => {
+                })
+                .catch(res => {
+                    console.log(res);
+                });
+        eventInput.value = "";        
     }
 
 }
