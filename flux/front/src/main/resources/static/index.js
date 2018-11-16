@@ -46,10 +46,12 @@ class IndexView {
     }
 
     newEvent(rv) {
-        const container = document.createElement("li");
-        container.appendChild(document.createTextNode(rv.id + " : "));
-        container.appendChild(document.createTextNode(rv.body));
-        return container;
+        const li = document.createElement("li");
+        li.appendChild(document.createTextNode(rv.id + " : "));
+        const pre = document.createElement("pre");
+        pre.appendChild(document.createTextNode(rv.body));
+        li.appendChild(pre);
+        return li;
     }
 
     onEnterEvent(event) {

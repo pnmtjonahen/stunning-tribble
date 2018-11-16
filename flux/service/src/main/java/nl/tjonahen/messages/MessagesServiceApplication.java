@@ -1,7 +1,16 @@
 package nl.tjonahen.messages;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,7 +22,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +30,8 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,7 +84,6 @@ class MessagesController {
 
 }
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 class MessageService {
@@ -87,7 +96,6 @@ class MessageService {
             messageSenders.add(new MessageSender() {
                 @Override
                 public void send(Message m) {
-                    log.info("Send message {} to {}", m, fluxSink);
                     fluxSink.next(m);
                 }
 
@@ -100,7 +108,6 @@ class MessageService {
     }
 
     public Flux<Message> getStoredMessages() {
-        log.info("Get stored messages...");
         return Flux.fromStream(repository.findAll().stream());
     }
 
@@ -110,15 +117,16 @@ class MessageService {
 
     @Async
     public void add(Message msg) {
-        log.info("Message received {}", msg);
         if ("/clear".equals(msg.getBody())) {
             this.deleteAll();
             return;
         }
+
+        if ("/cat".equals(msg.getBody())) {
+            msg.setBody(fetchCat());
+        }
         repository.save(msg);
-
         messageSenders.removeAll(messageSenders.stream().filter(MessageSender::isCancelled).collect(Collectors.toList()));
-
         messageSenders.forEach(ms -> ms.send(msg));
 
     }
@@ -129,6 +137,16 @@ class MessageService {
 
     public void deleteAll() {
         repository.deleteAll();
+    }
+
+    public String fetchCat() {
+        try {
+            File file = ResourceUtils.getFile("classpath:cat.txt");
+            InputStream in = new FileInputStream(file);
+            return StreamUtils.copyToString(in, Charset.defaultCharset());
+        } catch (IOException ex) {
+            return "no cats.";
+        }
     }
 
 }
