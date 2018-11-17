@@ -1,6 +1,6 @@
 package nl.tjonahen.messages;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -59,13 +59,11 @@ class MessagesController {
     private final MessageService service;
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @JsonView(EventView.class)
     public Flux<Message> get() {
         return Flux.merge(service.getNewMessages(), service.getStoredMessages());
     }
 
     @GetMapping("/download")
-    @JsonView(DownloadView.class)
     public List<Message> download() {
         return service.getAllMessages();
     }
@@ -160,8 +158,6 @@ interface MessageSender {
     boolean isCancelled();
 }
 
-interface EventView {}
-interface DownloadView {}
 
 @Getter
 @Setter
@@ -170,12 +166,11 @@ interface DownloadView {}
 @Entity
 class Message {
 
-    @JsonView(EventView.class)
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @JsonView({EventView.class, DownloadView.class})
     @Lob
     private String body;
 }
