@@ -46,12 +46,21 @@ class IndexView {
     }
 
     newEvent(rv) {
-        const li = document.createElement("li");
-        li.appendChild(document.createTextNode(rv.id + " : "));
+        const row = document.createElement("div");
+        row.className = "w3-row";
+        const header = document.createElement("div");
+        header.className = "w3-col s1 m1 l1";
+        const pHeader = document.createElement("p");
+        pHeader.appendChild(document.createTextNode(rv.id + " : "));
+        header.appendChild(pHeader);
+        row.appendChild(header);
+        const body = document.createElement("div");
+        body.className = "w3-col s1 m1 l1";
         const pre = document.createElement("pre");
         pre.appendChild(document.createTextNode(rv.body));
-        li.appendChild(pre);
-        return li;
+        body.appendChild(pre);
+        row.appendChild(body)
+        return row;
     }
 
     onEnterEvent(event) {

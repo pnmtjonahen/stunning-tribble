@@ -1,16 +1,13 @@
 package nl.tjonahen.messages;
 
-import java.io.ByteArrayInputStream;
+import com.fasterxml.jackson.annotation.JsonView;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -61,11 +59,13 @@ class MessagesController {
     private final MessageService service;
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @JsonView(EventView.class)
     public Flux<Message> get() {
         return Flux.merge(service.getNewMessages(), service.getStoredMessages());
     }
 
     @GetMapping("/download")
+    @JsonView(DownloadView.class)
     public List<Message> download() {
         return service.getAllMessages();
     }
@@ -80,6 +80,12 @@ class MessagesController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void addAll(@RequestBody List<Message> exportedMessages) {
         service.addAll(exportedMessages);
+    }
+    
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteAll() {
+        service.deleteAll();
     }
 
 }
@@ -117,12 +123,8 @@ class MessageService {
 
     @Async
     public void add(Message msg) {
-        if ("/clear".equals(msg.getBody())) {
-            this.deleteAll();
-            return;
-        }
 
-        if ("/cat".equals(msg.getBody())) {
+        if ("/cat".equals(msg.getBody().trim())) {
             msg.setBody(fetchCat());
         }
         repository.save(msg);
@@ -131,15 +133,17 @@ class MessageService {
 
     }
 
+    @Async
     public void addAll(List<Message> messages) {
         repository.saveAll(messages);
     }
 
+    @Async
     public void deleteAll() {
         repository.deleteAll();
     }
 
-    public String fetchCat() {
+    private String fetchCat() {
         try {
             File file = ResourceUtils.getFile("classpath:cat.txt");
             InputStream in = new FileInputStream(file);
@@ -152,11 +156,12 @@ class MessageService {
 }
 
 interface MessageSender {
-
     void send(Message m);
-
     boolean isCancelled();
 }
+
+interface EventView {}
+interface DownloadView {}
 
 @Getter
 @Setter
@@ -165,9 +170,12 @@ interface MessageSender {
 @Entity
 class Message {
 
+    @JsonView(EventView.class)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @JsonView({EventView.class, DownloadView.class})
     @Lob
     private String body;
 }
