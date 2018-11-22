@@ -1,0 +1,8 @@
+.ptj-event {
+  opacity: 0;
+  transform: scale(0);
+  /*
+  transition: .6s ease opacity,.6s ease transform;
+  */
+  transition: all .6s ease;
+}

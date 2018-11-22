@@ -32,12 +32,16 @@ class IndexView {
         const eventOutput = document.getElementById("eventoutput");
         this.eventSource = new EventSource(configuration.eventUrl());
         this.eventSource.onmessage = (e) => {
-            var rv = JSON.parse(e.data);
+            const ev = this.newEvent(JSON.parse(e.data));
             if (eventOutput.childNodes) {
-                eventOutput.insertBefore(this.newEvent(rv), eventOutput.childNodes[0]);
+                eventOutput.insertBefore(ev, eventOutput.childNodes[0]);
             } else {
-                eventOutput.appendChild(this.newEvent(rv));
+                eventOutput.appendChild(ev);
             }
+            setTimeout(() => {
+                ev.style.opacity = 1;
+                ev.style.transform = 'scale(1)';
+            }, 0);
         };
         this.eventSource.onerror = (e) => {
             console.log(e);
@@ -46,24 +50,9 @@ class IndexView {
     }
 
     newEvent(rv) {
-//        const row = document.createElement("div");
-//        row.className = "w3-row";
-//        const header = document.createElement("div");
-//        header.className = "w3-col s1 m1 l1";
-//        const pHeader = document.createElement("p");
-//        pHeader.appendChild(document.createTextNode(rv.id + " : "));
-//        header.appendChild(pHeader);
-//        row.appendChild(header);
-//        const body = document.createElement("div");
-//        body.className = "w3-col s1 m1 l1";
-        
-        const pre = document.createElement("pre");
-        pre.appendChild(document.createTextNode(rv.body));
-        const li = document.createElement("li");
-        li.appendChild(pre);
-        
-//        row.appendChild(body);
-        return li;
+        const template = document.createElement('template');
+        template.innerHTML = `<li class='ptj-event'><pre>${rv.body}</pre></li>`;
+        return template.content.firstChild;
     }
 
     onEnterEvent(event) {
@@ -94,7 +83,7 @@ class IndexView {
                 .catch(res => {
                     console.log(res);
                 });
-        eventInput.value = "";        
+        eventInput.value = "";
     }
 
 }
