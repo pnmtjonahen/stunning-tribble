@@ -1,37 +1,22 @@
 /* global fetch */
-/* global config */
 /*jshint esversion: 6 */
 
-if (!String.prototype.format) {
-    String.prototype.format = function () {
-        var args = arguments;
-        return this.replace(/{(\d+)}/g, function (match, number) {
-            return typeof args[number] !== 'undefined' ? args[number] : match;
-        });
-    };
-}
+//if (!String.prototype.format) {
+//    String.prototype.format = function () {
+//        var args = arguments;
+//        return this.replace(/{(\d+)}/g, function (match, number) {
+//            return typeof args[number] !== 'undefined' ? args[number] : match;
+//        });
+//    };
+//}
 
 
 class Configuration {
     constructor() {
-        this.cnf = config;
-        this.review = "{0}/api/review";
-        this.watchlist = "{0}/api/watchlist";
-        this.movies = "{0}/api/movies";
+        this.review = "/api/review";
+        this.watchlist = "/api/watchlist";
+        this.movies = "/api/movies";
     }
-
-    reviewUrl() {
-        return this.review.format(this.cnf.http_server);
-    }
-
-    watchlistUrl() {
-        return this.watchlist.format(this.cnf.http_server);
-    }
-
-    moviesUrl() {
-        return this.movies.format(this.cnf.http_server);
-    }
-
 }
 
 const configuration = new Configuration();
@@ -39,14 +24,13 @@ const configuration = new Configuration();
 class IndexView {
     constructor() {
         this.eventSource;
-        this.searchResultTemplate = document.getElementById("search-result");
-        this.searchResultContainer = this.searchResultTemplate.parentNode;
-        this.searchResultTemplate.removeAttribute("id");
+        this.searchResultContainer = document.getElementById("search-result");
         this.clearSearchResult();
+
         const reviewContainer = document.getElementById("reviews");
         var status = "open";
 
-        this.eventSource = new EventSource(configuration.reviewUrl());
+        this.eventSource = new EventSource(configuration.review);
         this.eventSource.onmessage = (e) => {
             if (status === "close") {
                 this.clearContainer(reviewContainer);
@@ -97,14 +81,13 @@ class IndexView {
 
         const search = document.getElementById("search").value;
 
-        fetch(configuration.moviesUrl() + "?query=" + search).then(res => res.json()).then(json => {
+        fetch(configuration.movies + "?query=" + search).then(res => res.json()).then(json => {
 
             json.forEach(searchresult => {
-                this.searchResultContainer.appendChild(this.addAction(
-                        this.replaceTemplateValues(
-                                this.searchResultTemplate.cloneNode(true)
+                this.searchResultContainer.appendChild(
+                        this.addAction(
+                                this.createSearchResult(searchresult)
                                 , searchresult)
-                        , searchresult)
                         );
             });
         });
@@ -142,7 +125,7 @@ class IndexView {
                 watched: "false"
             };
 
-            fetch(configuration.watchlistUrl(),
+            fetch(configuration.watchlist,
                     {
                         headers: {
                             'Content-Type': 'application/json'
@@ -151,10 +134,6 @@ class IndexView {
                         body: JSON.stringify(watchmovie)
                     })
                     .then(res => {
-//                        document.getElementById('added').style.display = 'block';
-//                        setTimeout(function () {
-//                            document.getElementById('added').style.display = 'none';
-//                        }, 2000);
                     })
                     .catch(res => {
                         console.log(res);
@@ -187,7 +166,7 @@ class IndexView {
                     review: review
                 };
 
-                fetch(configuration.reviewUrl(),
+                fetch(configuration.review,
                         {
                             headers: {
                                 'Content-Type': 'application/json'
@@ -196,10 +175,6 @@ class IndexView {
                             body: JSON.stringify(movieReview)
                         })
                         .then(res => {
-//                        document.getElementById('added').style.display = 'block';
-//                        setTimeout(function () {
-//                            document.getElementById('added').style.display = 'none';
-//                        }, 2000);
                         })
                         .catch(res => {
                             console.log(res);
@@ -210,32 +185,18 @@ class IndexView {
         return btn;
     }
 
-    replaceTemplateValues(node, searchresult) {
-
-        Array.from(node.childNodes)
-                .filter(n => n.nodeType === Node.TEXT_NODE).forEach(n => {
-            let name;
-            if ((name = /\{(.*?)\}/.exec(n.nodeValue)) !== null) {
-                n.nodeValue = searchresult[name[1]];
-            }
-        });
-
-        Array.from(node.childNodes)
-                .filter(n => n.nodeType !== Node.TEXT_NODE)
-                .forEach(n => {
-                    if (n.attributes && n.attributes.length > 0) {
-                        Array.from(n.attributes).forEach(attr => {
-                            Object.keys(searchresult).forEach(name => {
-                                if (attr.value === "{" + name + "}") {
-                                    attr.value = searchresult[name];
-                                }
-                            });
-                        });
-                    }
-                    this.replaceTemplateValues(n, searchresult);
-                });
-
-        return node;
+    createSearchResult(searchresult) {
+        const template = document.createElement('template');
+        template.innerHTML =
+`<div  class="w3-container w3-card w3-white w3-round w3-margin"><br>
+    <img id="poster" src="${searchresult.poster}" alt="Filmor-serie" class="w3-left w3-margin-right" style="width:60px"/>
+    <h4>${searchresult.title}</h4><br>
+    <hr class="w3-clear">
+    <p>${searchresult.description}</p>
+    <img id="backdrop" src="${searchresult.backdrop}" style="width:100%" alt="poster" class="w3-margin-bottom">
+</div>`;
+        
+        return template.content.firstChild;
     }
 
     toggelWatchList() {
@@ -245,7 +206,7 @@ class IndexView {
             x.className += " w3-show";
             x.previousElementSibling.className += " w3-theme-d1";
 
-            fetch(configuration.watchlistUrl()).then(res => res.json()).then(json => {
+            fetch(configuration.watchlist).then(res => res.json()).then(json => {
                 json.forEach(wl => {
                     const p = document.createElement("p");
                     p.appendChild(document.createTextNode(wl.title));
