@@ -1,14 +1,6 @@
 /* global fetch */
 /*jshint esversion: 6 */
 
-//if (!String.prototype.format) {
-//    String.prototype.format = function () {
-//        var args = arguments;
-//        return this.replace(/{(\d+)}/g, function (match, number) {
-//            return typeof args[number] !== 'undefined' ? args[number] : match;
-//        });
-//    };
-//}
 
 
 class Configuration {
@@ -48,22 +40,21 @@ class IndexView {
             console.log(e);
         };
     }
+    
+    elementFromHtmlTemplate(htmlTemplate) {
+        const template = document.createElement('template');
+        template.innerHTML = htmlTemplate;
+        return template.content.firstChild;        
+    }
 
     newReview(rv) {
-        const container = document.createElement("div");
-        container.className = " w3-card w3-round w3-white w3-center";
-
-        const div = document.createElement("div");
-        div.className = "w3-container";
-        const pTitle = document.createElement("p");
-        pTitle.appendChild(document.createTextNode(rv.title));
-        div.appendChild(pTitle);
-        const pReview = document.createElement("p");
-        pReview.appendChild(document.createTextNode(rv.review));
-        div.appendChild(pReview);
-
-        container.appendChild(div);
-        return container;
+        return this.elementFromHtmlTemplate(
+`<div  class="w3-card w3-round w3-white w3-center">
+    <div class="w3-container">
+        <p>${rv.title}</p>
+        <p>${rv.review}</p>
+    </div>
+</div>`);
     }
 
     clearContainer(c) {
@@ -109,13 +100,11 @@ class IndexView {
     }
 
     addWatchListButton(searchresult) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "w3-button w3-theme-d1 w3-margin-bottom";
-        const i = document.createElement("i");
-        i.className = "fa fa-thumbs-up";
-        btn.appendChild(i);
-        btn.appendChild(document.createTextNode(" Add to watchlist"));
+        const btn = this.elementFromHtmlTemplate(
+`<button type="button" class="w3-button w3-theme-d1 w3-margin-bottom">
+    <i class="fa fa-thumbs-up"></i> Add to watchlist
+</button>`);                
+
         btn.onclick = (e) => {
             //call add watch list with search result
             const watchmovie = {
@@ -143,13 +132,11 @@ class IndexView {
     }
 
     addReviewButton(searchresult) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "w3-button w3-theme-d1 w3-margin-bottom w3-margin-left";
-        const i = document.createElement("i");
-        i.className = "fa fa-comment";
-        btn.appendChild(i);
-        btn.appendChild(document.createTextNode(" Review"));
+        const btn = this.elementFromHtmlTemplate(
+`<button type="button" class="w3-button w3-theme-d1 w3-margin-bottom w3-margin-left">
+    <i class="fa fa-comment"></i> Review
+</button>`);                
+
         btn.onclick = () => {
             // update review dialog with title and other info
             var pTitle = document.getElementById("review-title");
@@ -186,17 +173,14 @@ class IndexView {
     }
 
     createSearchResult(searchresult) {
-        const template = document.createElement('template');
-        template.innerHTML =
+        return this.elementFromHtmlTemplate(
 `<div  class="w3-container w3-card w3-white w3-round w3-margin"><br>
     <img id="poster" src="${searchresult.poster}" alt="Filmor-serie" class="w3-left w3-margin-right" style="width:60px"/>
     <h4>${searchresult.title}</h4><br>
     <hr class="w3-clear">
     <p>${searchresult.description}</p>
     <img id="backdrop" src="${searchresult.backdrop}" style="width:100%" alt="poster" class="w3-margin-bottom">
-</div>`;
-        
-        return template.content.firstChild;
+</div>`);
     }
 
     toggelWatchList() {
