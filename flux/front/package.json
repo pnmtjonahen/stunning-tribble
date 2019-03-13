@@ -1,5 +1,6 @@
 {
     "name": "message-front",
+    "description": "message frontend",
     "version": "1.0.0-SNAPSHOT",
     "keywords": [
         "functional",
@@ -10,7 +11,12 @@
     "contributors": [
     ],
     "scripts": {
-       "deploy":"cp configuration-cf.js configuration.js; cf push; cp configuration-local.js configuration.js"  
+        "deploy": "cp configuration-cf.js configuration.js; cf push; cp configuration-local.js configuration.js"  
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pnmtjonahen/stunning-tribble.git"
+    },
+    "license": "GPL-3.0",
     "dependencies": {}
 }

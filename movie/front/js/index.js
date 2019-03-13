@@ -37,7 +37,7 @@ class IndexView {
             reviewContainer.appendChild(this.newReview({title:"Error", review:"Reviews not available"}));
             reviewContainer.appendChild(document.createElement("br"));
             status = "close";
-            console.log(e);
+            console.table(e);
         };
     }
     

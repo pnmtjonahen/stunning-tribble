@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -59,24 +60,24 @@ class MessagesController {
     private final MessageService service;
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Message> get() {
+    public Flux<JsonMessage> get() {
         return Flux.merge(service.getNewMessages(), service.getStoredMessages());
     }
 
     @GetMapping("/download")
-    public List<Message> download() {
+    public List<JsonMessage> download() {
         return service.getAllMessages();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void add(@RequestBody Message msg) {
+    public void add(@RequestBody JsonMessage msg) {
         service.add(msg);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void addAll(@RequestBody List<Message> exportedMessages) {
+    public void addAll(@RequestBody List<JsonMessage> exportedMessages) {
         service.addAll(exportedMessages);
     }
     
@@ -95,11 +96,14 @@ class MessageService {
     private final MessageRepository repository;
     private final List<MessageSender> messageSenders = new ArrayList<>();
 
-    public Flux<Message> getNewMessages() {
-        return Flux.create((FluxSink<Message> fluxSink) -> {
+    /*
+     * Creates a message sink for new incomming messages. 
+     */
+    public Flux<JsonMessage> getNewMessages() {
+        return Flux.create((FluxSink<JsonMessage> fluxSink) -> {
             messageSenders.add(new MessageSender() {
                 @Override
-                public void send(Message m) {
+                public void send(JsonMessage m) {
                     fluxSink.next(m);
                 }
 
@@ -111,29 +115,35 @@ class MessageService {
         });
     }
 
-    public Flux<Message> getStoredMessages() {
-        return Flux.fromStream(repository.findAll().stream());
+    /*
+    * Get all stored messages as a flux
+    */
+    public Flux<JsonMessage> getStoredMessages() {
+        return Flux.fromStream(repository.findAll().stream().map(JsonMessage::fromMessage));
     }
 
-    public List<Message> getAllMessages() {
-        return repository.findAll();
+    /*
+    * Get all messages as one single list
+    */
+    public List<JsonMessage> getAllMessages() {
+        return repository.findAll().stream().map(JsonMessage::fromMessage).collect(Collectors.toList());
     }
 
     @Async
-    public void add(Message msg) {
+    public void add(JsonMessage msg) {
 
         if ("/cat".equals(msg.getBody().trim())) {
             msg.setBody(fetchCat());
         }
-        repository.save(msg);
+        repository.save(Message.fromJsonMessage(msg));
         messageSenders.removeAll(messageSenders.stream().filter(MessageSender::isCancelled).collect(Collectors.toList()));
-        messageSenders.forEach(ms -> ms.send(msg));
+        messageSenders.forEach(ms -> ms.send(msg.sanitize()));
 
     }
 
     @Async
-    public void addAll(List<Message> messages) {
-        repository.saveAll(messages);
+    public void addAll(List<JsonMessage> messages) {
+        repository.saveAll(messages.stream().map(Message::fromJsonMessage).collect(Collectors.toList()));
     }
 
     @Async
@@ -154,10 +164,26 @@ class MessageService {
 }
 
 interface MessageSender {
-    void send(Message m);
+    void send(JsonMessage m);
     boolean isCancelled();
 }
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+class JsonMessage {
+    private String body;
+    
+    public static JsonMessage fromMessage(Message m) {
+        return new JsonMessage(HtmlUtils.htmlEscape(m.getBody()));
+    }
+    
+    public JsonMessage sanitize() {
+        this.body = HtmlUtils.htmlEscape(body);
+        return this;
+    }
+}
 
 @Getter
 @Setter
@@ -173,6 +199,12 @@ class Message {
 
     @Lob
     private String body;
+    
+    public static Message fromJsonMessage(JsonMessage m) {
+        final Message msg = new Message();
+        msg.setBody(m.getBody());
+        return msg;
+    }
 }
 
 interface MessageRepository extends JpaRepository<Message, Long> {

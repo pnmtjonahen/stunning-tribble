@@ -39,8 +39,7 @@ class IndexView {
                 eventOutput.appendChild(ev);
             }
             setTimeout(() => {
-                ev.style.opacity = 1;
-                ev.style.transform = 'scale(1)';
+                ev.classList.toggle("ptj-event-show");
             }, 0);
         };
         this.eventSource.onerror = (e) => {
@@ -51,7 +50,7 @@ class IndexView {
 
     newEvent(rv) {
         const template = document.createElement('template');
-        template.innerHTML = `<li class='ptj-event'><pre>${rv.body}</pre></li>`;
+        template.innerHTML = `<li class='ptj-event-hidden'><pre>${rv.body}</pre></li>`;
         return template.content.firstChild;
     }
 

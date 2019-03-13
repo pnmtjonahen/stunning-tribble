@@ -1,8 +1,11 @@
-.ptj-event {
+.ptj-event-hidden {
   opacity: 0;
-  transform: scale(0);
   /*
-  transition: .6s ease opacity,.6s ease transform;
+      transition: .6s ease opacity,.6s ease transform;
   */
-  transition: all .6s ease;
+  transition: all .7s;
+}
+
+.ptj-event-show {
+  opacity: 1;
 }
