@@ -176,7 +176,7 @@ class JsonMessage {
     private String body;
     
     public static JsonMessage fromMessage(Message m) {
-        return new JsonMessage(HtmlUtils.htmlEscape(m.getBody()));
+        return new JsonMessage(m.getBody());
     }
     
     public JsonMessage sanitize() {
